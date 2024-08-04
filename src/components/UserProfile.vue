@@ -1,27 +1,27 @@
 <template>
   <div class="container mt-5">
     <div class="card bg-dark bg-gradient text-white">
-      <div class="card-header  text-center p-10">
+      <div class="card-header text-center p-10">
         <h3>User Profile</h3>
       </div>
-      <div class="card-body " style="background-color: rgb(141 149 150);">
+      <div class="card-body" style="background-color: rgb(141, 149, 150);">
         <div class="text-center mb-4">
           <div class="position-relative d-inline-block">
-            <img @click="triggerFileInput" :src="profileImage" class="rounded-circle  profile-img" alt="Profile Image">
+            <img @click="triggerFileInput" :src="profileImage" class="rounded-circle profile-img" alt="Profile Image">
             <input type="file" ref="fileInput" @change="onImageChange" class="d-none">
           </div>
         </div>
-        <form @submit.prevent="saveProfile" class="text-start" >
+        <form @submit.prevent="saveProfile" class="text-start">
           <div class="row">
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label for="firstName">First Name</label>
-                <input 
-                  type="text" 
-                  v-model="user.firstName" 
-                  class="form-control" 
-                  id="firstName" 
-                  :class="{'is-invalid': !validations.firstName}" 
+                <input
+                  type="text"
+                  v-model="user.firstName"
+                  class="form-control"
+                  id="firstName"
+                  :class="{'is-invalid': !validations.firstName}"
                   required>
                 <div v-if="!validations.firstName" class="invalid-feedback">
                   First name is required.
@@ -31,12 +31,12 @@
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label for="lastName">Last Name</label>
-                <input 
-                  type="text" 
-                  v-model="user.lastName" 
-                  class="form-control" 
-                  id="lastName" 
-                  :class="{'is-invalid': !validations.lastName}" 
+                <input
+                  type="text"
+                  v-model="user.lastName"
+                  class="form-control"
+                  id="lastName"
+                  :class="{'is-invalid': !validations.lastName}"
                   required>
                 <div v-if="!validations.lastName" class="invalid-feedback">
                   Last name is required.
@@ -48,12 +48,12 @@
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label for="email">Email</label>
-                <input 
-                  type="email" 
-                  v-model="user.email" 
-                  class="form-control" 
-                  id="email" 
-                  :class="{'is-invalid': !validations.email}" 
+                <input
+                  type="email"
+                  v-model="user.email"
+                  class="form-control"
+                  id="email"
+                  :class="{'is-invalid': !validations.email}"
                   required>
                 <div v-if="!validations.email" class="invalid-feedback">
                   Please enter a valid email address.
@@ -63,12 +63,12 @@
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label for="phone">Phone Number</label>
-                <input 
-                  type="tel" 
-                  v-model="user.phone" 
-                  class="form-control" 
-                  id="phone" 
-                  :class="{'is-invalid': !validations.phone}" 
+                <input
+                  type="tel"
+                  v-model="user.phone"
+                  class="form-control"
+                  id="phone"
+                  :class="{'is-invalid': !validations.phone}"
                   required>
                 <div v-if="!validations.phone" class="invalid-feedback">
                   Phone number is required.
@@ -80,12 +80,12 @@
             <div class="col-md-6">
               <div class="form-group mb-3">
                 <label for="nationality">Nationality</label>
-                <input 
-                  type="text" 
-                  v-model="user.nationality" 
-                  class="form-control" 
-                  id="nationality" 
-                  :class="{'is-invalid': !validations.nationality}" 
+                <input
+                  type="text"
+                  v-model="user.nationality"
+                  class="form-control"
+                  id="nationality"
+                  :class="{'is-invalid': !validations.nationality}"
                   required>
                 <div v-if="!validations.nationality" class="invalid-feedback">
                   Nationality is required.
@@ -95,11 +95,11 @@
             <div class="col-md-6 ms-10">
               <div class="form-group mb-3">
                 <label for="gender">Gender</label>
-                <select 
-                  v-model="user.gender" 
-                  class="form-control" 
-                  id="gender" 
-                  :class="{'is-invalid': !validations.gender}" 
+                <select
+                  v-model="user.gender"
+                  class="form-control"
+                  id="gender"
+                  :class="{'is-invalid': !validations.gender}"
                   required>
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -144,7 +144,27 @@ export default {
       }
     };
   },
+  created() {
+    this.fetchUserData();
+  },
   methods: {
+    async fetchUserData() {
+      try {
+        const response = await fetch('https://dummyjson.com/users/1');
+        const data = await response.json();
+        this.user = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          nationality: data.nationality,
+          gender: data.gender || ''
+        };
+        this.profileImage = data.image || this.profileImage;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
@@ -170,57 +190,52 @@ export default {
     saveProfile() {
       if (this.validateForm()) {
         console.log('Profile saved:', this.user);
-      } 
+      } else {
+        console.error('Validation failed');
+      }
     }
   }
 };
 </script>
 
 <style>
-
 .container {
   max-width: 800px;
 }
+
 .card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
- 
-  padding: 10;
+  padding: 10px;
 }
+
 .profile-img {
   width: 250px;
-  height:250px;
+  height: 250px;
   cursor: pointer;
-  border: rgb(51, 51, 126) solid 1px;
+  border: 3px solid rgb(9, 9, 54);
+
 }
+
 @media (max-width: 768px) {
   .profile-img {
     width: 200px;
     height: 200px;
-
-
   }
- 
   .container {
     max-width: 80%;
     padding: 50px;
-  
   }
+}
 
-
-
-  @media (max-width: 380px) {
+@media (max-width: 380px) {
   .profile-img {
     width: 100px;
     height: 100px;
   }
-
 }
 
-}
-label{
-  color:rgb(37, 26, 26);
+label {
+  color: rgb(37, 26, 26);
   font-weight: bold;
 }
-
 </style>
